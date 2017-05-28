@@ -2,7 +2,9 @@ package com.devlovepreet.parkitlive.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -10,6 +12,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -17,9 +20,19 @@ import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.devlovepreet.parkitlive.AppController;
 import com.devlovepreet.parkitlive.GoogleMapsFiles.DirectionsJSONParser;
 import com.devlovepreet.parkitlive.R;
 import com.devlovepreet.parkitlive.GoogleMapsFiles.Navigator;
+import com.devlovepreet.parkitlive.activities.LoginActivity;
+import com.devlovepreet.parkitlive.activities.MainActivity;
+import com.devlovepreet.parkitlive.data.AppConfig;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -38,6 +51,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -49,6 +63,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MyLocationFragment extends SupportMapFragment
         implements OnMapReadyCallback,
@@ -72,14 +89,23 @@ public class MyLocationFragment extends SupportMapFragment
     LatLng latLngG3SDefault;
     Marker tempMarker1;
 
-    ArrayList<Marker> staticMarkerList;
-    ArrayList<LatLng> staticLatLngList;
+    int parkingStatus1=0, parkingStatus2=0, parkingStatus3=0, parkingStatus4=0, parkingStatus5=0, parkingStatus6=0, parkingStatus7=0, parkingStatus8=0, parkingStatus9=0, parkingStatus10=0;
+    int gasStatus=0;
+
+    Handler handler;
+    Timer timer;
+    TimerTask doAsynchronousTask;
+
+    private ProgressDialog pDialog;
+
+    String OCCUPIED="occupied", EMPTY="empty";
 
     public static MyLocationFragment createFor(String text) {
         MyLocationFragment fragment = new MyLocationFragment();
         Bundle args = new Bundle();
         args.putString(EXTRA_TEXT, text);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -87,7 +113,43 @@ public class MyLocationFragment extends SupportMapFragment
     public void onResume() {
         super.onResume();
 
+
         setUpMapIfNeeded();
+    }
+
+
+
+    @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+
+        callAsynchronousTask();
+
+    }
+
+    public void callAsynchronousTask()
+    {
+
+        handler = new Handler();
+        timer = new Timer();
+        doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            getParkingStatus();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 5000); //execute in every 50000 ms
+
+
+
     }
 
     private void setUpMapIfNeeded() {
@@ -115,8 +177,12 @@ public class MyLocationFragment extends SupportMapFragment
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         String theme = sharedPreferences.getString(getString(R.string.pref_theme_key),
                 getString(R.string.pref_theme_light_value));
-        
+
+        pDialog = new ProgressDialog(getActivity());
+        pDialog.setCancelable(false);
+
         addAllDynamicMarkers();
+        addAllStaticMarkers();
         setOnClickListenerOnMap();
 
         if (theme.equals(getResources().getString(R.string.pref_theme_light_value))) {
@@ -152,15 +218,6 @@ public class MyLocationFragment extends SupportMapFragment
 
     }
 
-    public void initializeStaticMarkerList()
-    {
-        staticLatLngList=new ArrayList<LatLng>();
-        staticMarkerList=new ArrayList<Marker>();
-
-        //now we will add all latitude longitude objects in the list
-
-
-    }
 
     public void addAllDynamicMarkers()
     {
@@ -174,21 +231,45 @@ public class MyLocationFragment extends SupportMapFragment
         latLng8=new LatLng(28.733765, 77.113056);
         latLng9=new LatLng(28.734141, 77.112376);
         latLng10=new LatLng(28.734296, 77.112505);
-        latLngInitial=new LatLng(28.734821, 77.114231);
 
+        marker1=mGoogleMap.addMarker(new MarkerOptions().position(latLng1).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
+        marker2=mGoogleMap.addMarker(new MarkerOptions().position(latLng2).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
+        marker3=mGoogleMap.addMarker(new MarkerOptions().position(latLng3).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
+        marker4=mGoogleMap.addMarker(new MarkerOptions().position(latLng4).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
+        marker5=mGoogleMap.addMarker(new MarkerOptions().position(latLng5).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
+        marker6=mGoogleMap.addMarker(new MarkerOptions().position(latLng6).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
+        marker7=mGoogleMap.addMarker(new MarkerOptions().position(latLng7).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
+        marker8=mGoogleMap.addMarker(new MarkerOptions().position(latLng8).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
+        marker9=mGoogleMap.addMarker(new MarkerOptions().position(latLng9).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
+        marker10=mGoogleMap.addMarker(new MarkerOptions().position(latLng10).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(EMPTY));
 
-        markerInitial=mGoogleMap.addMarker(new MarkerOptions().position(latLngInitial).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).title("Entry"));
-        marker1=mGoogleMap.addMarker(new MarkerOptions().position(latLng1).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-1"));
-        marker2=mGoogleMap.addMarker(new MarkerOptions().position(latLng2).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-2"));
-        marker3=mGoogleMap.addMarker(new MarkerOptions().position(latLng3).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-3"));
-        marker4=mGoogleMap.addMarker(new MarkerOptions().position(latLng4).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-4"));
-        marker5=mGoogleMap.addMarker(new MarkerOptions().position(latLng5).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-5"));
-        marker6=mGoogleMap.addMarker(new MarkerOptions().position(latLng6).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-6"));
-        marker7=mGoogleMap.addMarker(new MarkerOptions().position(latLng7).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-7"));
-        marker8=mGoogleMap.addMarker(new MarkerOptions().position(latLng8).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-8"));
-        marker9=mGoogleMap.addMarker(new MarkerOptions().position(latLng9).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-9"));
-        marker9=mGoogleMap.addMarker(new MarkerOptions().position(latLng9).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-10"));
+    }
 
+    public void addAllStaticMarkers()
+    {
+        latLngInitial=new LatLng(28.733754, 77.114063);
+        markerInitial=mGoogleMap.addMarker(new MarkerOptions().position(latLngInitial).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).title(OCCUPIED));
+
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.732463, 77.113606)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.732773, 77.113073)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733036, 77.112762)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733726, 77.111780)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733585, 77.111973)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733728, 77.112129)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733846, 77.111941)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733511, 77.112271)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733553, 77.112606)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733384, 77.112472)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.734513, 77.112842)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.734701, 77.112660)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.735223, 77.113266)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.734931, 77.113057)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.734127, 77.114843)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733859, 77.114591)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733429, 77.114439)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733589, 77.114243)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733323, 77.114013)));
+        mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title(OCCUPIED).position(new LatLng(28.733191, 77.114260)));
 
     }
 
@@ -197,15 +278,21 @@ public class MyLocationFragment extends SupportMapFragment
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker destinationMarker) {
+
                 LatLng latLngDestination = destinationMarker.getPosition();
 
+                //check if a red marker is clicked, i.e a marker with title = occupied
+                String title=destinationMarker.getTitle();
+                if(title.contentEquals(OCCUPIED))
+                    return false;
+
                 deleteAllExistingPathFromMap();
-                addAllDynamicMarkers();
+                //addAllDynamicMarkers();
+                setMarkerAccordingToApiResponse();
+                addAllStaticMarkers();
 
                 destinationMarker.remove();
                 tempMarker1=mGoogleMap.addMarker(new MarkerOptions().position(latLngDestination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)).title("Destination"));
-                //destinationMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker_icon_red));
-               // destinationMarker.setTitle("Destination Parking ");
 
                 //---
                 // Getting URL to the Google Directions API
@@ -215,9 +302,6 @@ public class MyLocationFragment extends SupportMapFragment
                 downloadTask.execute(url);
                 //------
 
-
-               // Navigator navigator = new Navigator(mGoogleMap, latLngInitial, latLngDestination);
-                //navigator.findDirections(false);
                 return false;
             }
         });
@@ -227,6 +311,167 @@ public class MyLocationFragment extends SupportMapFragment
     public void deleteAllExistingPathFromMap()
     {
         mGoogleMap.clear();
+    }
+
+
+
+    private void getParkingStatus() {
+        // Tag used to cancel the request
+        String tag_json_obj = "parking_status_request";
+
+        AppConfig appConfig = new AppConfig();
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, appConfig.PARKING_STATUS, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject main) {
+
+
+
+                        Log.d("parkingstatus", main.toString());
+                        try {
+
+                            JSONObject response=main.getJSONObject("msg");
+                            parkingStatus1=response.getInt("parking1");
+                            parkingStatus2=response.getInt("parking2");
+                            parkingStatus3=response.getInt("parking3");
+                            parkingStatus4=response.getInt("parking4");
+                            parkingStatus5=response.getInt("parking5");
+                            parkingStatus6=response.getInt("parking6");
+                            parkingStatus7=response.getInt("parking7");
+                            parkingStatus8=response.getInt("parking8");
+                            parkingStatus9=response.getInt("parking9");
+                            parkingStatus10=response.getInt("parking10");
+                            gasStatus=response.getInt("gas");
+
+                           // Log.i("parkingstatus", "status : "+parkingStatus1+parkingStatus2+gasStatus);
+
+                            setMarkerAccordingToApiResponse();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("parkingstatus", "Error: " + error.getMessage());
+                Toast.makeText(getActivity(), getResources().getString(R.string.toast_some_error_occurred), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+//            @Override
+//            public byte[] getBody() {
+//              needed in post requests
+//
+//  HashMap<String, String> params = new HashMap<String, String>();
+//                params.put(getResources().getString(R.string.key_email), email);
+//                params.put(getResources().getString(R.string.key_password), password);
+//                return new JSONObject(params).toString().getBytes();
+//            }
+
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1OTI2Y2E1NmU1OWZjZDU4ZTIzMDJjZDgiLCJlbWFpbCI6ImRldi5sb3ZlcHJlZXRzaW5naEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRVU1p2bUswU3dpWGZiRkhWLkRJeHllUnV1Si5sUTE0cVpWUFpTcVRSL0VoVXBFWS9qQ043eSIsIm5hbWUiOiJMb3ZlcHJlZXQgU2luZ2giLCJ2ZWhpY2xlTnVtYmVyIjoiTUQgMTEwMiIsIl9fdiI6MCwibWludXRlcyI6MCwiaG91ciI6MCwiZGF5IjowLCJtb250aCI6MCwieWVhciI6MCwicGFya1N0YXJ0RmxhZyI6MH0.gbam6xKhAok3rf9ceixSgYTYh48zfXviecIAPXOjpj8");
+                return headers;
+            }
+
+        };
+
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+
+    }
+
+//    private void showDialog() {
+//        if (!pDialog.isShowing())
+//            pDialog.show();
+//    }
+//
+//    private void hideDialog() {
+//        if (pDialog.isShowing())
+//            pDialog.dismiss();
+//    }
+
+    public void setMarkerAccordingToApiResponse()
+    {
+
+
+        Log.d("parkingstatus", "Marker updated");
+
+        if(parkingStatus1==0)
+            updateMarker(marker1, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker1, BitmapDescriptorFactory.HUE_RED);
+
+        if(parkingStatus2==0)
+            updateMarker(marker2, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker2, BitmapDescriptorFactory.HUE_RED);
+
+        if(parkingStatus3==0)
+            updateMarker(marker3, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker3, BitmapDescriptorFactory.HUE_RED);
+
+        if(parkingStatus4==0)
+            updateMarker(marker4, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker4, BitmapDescriptorFactory.HUE_RED);
+
+        if(parkingStatus5==0)
+            updateMarker(marker5, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker5, BitmapDescriptorFactory.HUE_RED);
+
+        if(parkingStatus6==0)
+            updateMarker(marker6, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker6, BitmapDescriptorFactory.HUE_RED);
+
+        if(parkingStatus7==0)
+            updateMarker(marker7, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker7, BitmapDescriptorFactory.HUE_RED);
+
+        if(parkingStatus8==0)
+            updateMarker(marker8, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker8, BitmapDescriptorFactory.HUE_RED);
+
+        if(parkingStatus9==0)
+            updateMarker(marker9, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker9, BitmapDescriptorFactory.HUE_RED);
+
+        if(parkingStatus10==0)
+            updateMarker(marker10, BitmapDescriptorFactory.HUE_GREEN);
+        else
+            updateMarker(marker10, BitmapDescriptorFactory.HUE_RED);
+
+
+    }
+
+    public void updateMarker(Marker marker, float color)
+    {
+        //Log.d("parkingstatus", "update marker called");
+
+       // marker.remove();
+        LatLng latLngMarker=marker.getPosition();
+        marker.remove();
+        marker=mGoogleMap.addMarker(new MarkerOptions().position(latLngMarker).icon(BitmapDescriptorFactory.defaultMarker(color)));
+
+        if(color==BitmapDescriptorFactory.HUE_GREEN)
+            marker.setTitle(EMPTY);
+        else
+            marker.setTitle(OCCUPIED);
+
     }
 
     protected synchronized void buildGoogleApiClient() {

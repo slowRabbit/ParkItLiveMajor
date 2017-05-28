@@ -10,4 +10,7 @@ public class AppConfig {
     public static String URL_USER = "https://park-it-live-api.herokuapp.com/api/user";
     public static String URL_USER_HISTORY = "https://park-it-live-api.herokuapp.com/api/userHistory";
     public static String URL_ADD_USER_HISTORY = "https://park-it-live-api.herokuapp.com/api/addToUserHistory";
+
+    public static String PARKING_STATUS="https://park-it-live-api.herokuapp.com/api/parkingStatus";
+
 }
