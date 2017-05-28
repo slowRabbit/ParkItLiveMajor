@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="themedBackgroundColor" format="reference" />
+    <attr name="themedBackgroundColorDrawer" format="reference" />
+    <attr name="themedTextColor" format="reference" />
+    <attr name="themedSettingsIcon" format="reference" />
+</resources>

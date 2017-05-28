@@ -1,0 +1,29 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="themedBackgroundColor">@color/colorPrimary</item>
+        <item name="themedBackgroundColorDrawer">@color/colorPrimary</item>
+        <item name="themedTextColor">@color/textColorPrimary</item>
+        <item name="themedSettingsIcon">@drawable/ic_action_settings_light_theme</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryInverse</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkInverse</item>
+        <item name="colorAccent">@color/colorAccentInverse</item>
+        <item name="android:textColorPrimary">@color/textColorPrimaryInverse</item>
+        <item name="android:textColorSecondary">@color/textColorSecondaryInverse</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="themedBackgroundColor">@color/backgroundColorInverse</item>
+        <item name="themedBackgroundColorDrawer">@color/backgroundColorDrawerInverse</item>
+        <item name="themedTextColor">@color/textColorPrimaryInverse</item>
+        <item name="themedSettingsIcon">@drawable/ic_action_settings_dark_theme</item>
+    </style>
+
+</resources>

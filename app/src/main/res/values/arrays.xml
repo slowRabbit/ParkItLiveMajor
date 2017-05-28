@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="ld_activityScreenTitles">
+        <item>Parking Map</item>
+        <item>My Account</item>
+        <item>My Location</item>
+        <item>History</item>
+        <item />
+        <item>Log Out</item>
+    </string-array>
+
+    <array name="ld_activityScreenIcons">
+        <item>@drawable/ic_map</item>
+        <item>@drawable/ic_account_circle</item>
+        <item>@drawable/ic_my_location</item>
+        <item>@drawable/ic_history</item>
+        <item>0</item>
+        <item>@drawable/ic_logout_grey600_24dp</item>
+    </array>
+
+    <array name="pref_theme_labels">
+        <item>@string/pref_theme_light_label</item>
+        <item>@string/pref_theme_dark_label</item>
+    </array>
+
+    <array name="pref_theme_values">
+        <item>@string/pref_theme_light_value</item>
+        <item>@string/pref_theme_dark_value</item>
+    </array>
+
+</resources>

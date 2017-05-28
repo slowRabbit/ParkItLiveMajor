@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light Theme -->
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#bdbdbd</color>
+    <color name="colorAccent">#448AFF</color>
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#757575</color>
+
+    <!-- Dark Theme -->
+    <color name="colorPrimaryInverse">#242728</color>
+    <color name="colorPrimaryDarkInverse">#1d1f20</color>
+    <color name="colorAccentInverse">#448AFF</color>
+    <color name="textColorPrimaryInverse">#eeeeee</color>
+    <color name="textColorSecondaryInverse">#dddddd</color>
+    <color name="backgroundColorInverse">#303030</color>
+    <color name="backgroundColorDrawerInverse">#202020</color>
+
+    <!-- Others -->
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="gray">#eeeeee</color>
+    <color name="light_gray">#fafafa</color>
+    <color name="blue_grey">#546e7a</color>
+
+    <color name="bluelight1">#1565C0</color>
+    <color name="bluedark1">#0D47A1</color>
+
+</resources>
