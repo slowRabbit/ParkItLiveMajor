@@ -27,7 +27,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.MainActivity" />
-
         <activity
             android:name=".activities.MapsActivity"
             android:label="@string/title_activity_maps" />
@@ -37,7 +36,6 @@
         <activity
             android:name=".activities.SignupActivity"
             android:windowSoftInputMode="adjustResize" />
-
         <activity android:name=".activities.SettingsActivity" />
 
         <meta-data
@@ -47,6 +45,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <activity android:name=".activities.BillActivity"></activity>
     </application>
 
 </manifest>

@@ -8,6 +8,20 @@
         android:icon="?attr/themedSettingsIcon"
         android:orderInCategory="100"
         android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_start"
+        android:icon="@drawable/start_icon"
+        android:orderInCategory="200"
+        android:title="@string/action_settings"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_end"
+        android:icon="@drawable/stop_icon"
+        android:orderInCategory="300"
+        android:title="@string/action_settings"
         app:showAsAction="always" />
 
 </menu>

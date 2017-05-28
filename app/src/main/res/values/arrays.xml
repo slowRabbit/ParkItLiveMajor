@@ -2,20 +2,16 @@
 <resources>
 
     <string-array name="ld_activityScreenTitles">
-        <item>Parking Map</item>
-        <item>My Account</item>
-        <item>My Location</item>
+        <item>Find Parking</item>
+        <item>Find My Car</item>
         <item>History</item>
-        <item />
         <item>Log Out</item>
     </string-array>
 
     <array name="ld_activityScreenIcons">
         <item>@drawable/ic_map</item>
-        <item>@drawable/ic_account_circle</item>
         <item>@drawable/ic_my_location</item>
         <item>@drawable/ic_history</item>
-        <item>0</item>
         <item>@drawable/ic_logout_grey600_24dp</item>
     </array>
 

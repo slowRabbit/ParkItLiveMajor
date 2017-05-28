@@ -18,11 +18,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.devlovepreet.parkitlive.R;
 import com.devlovepreet.parkitlive.fragments.CenteredTextFragment;
-import com.devlovepreet.parkitlive.fragments.MyLocationFragment;
-import com.devlovepreet.parkitlive.fragments.ParkingMapFragment;
+import com.devlovepreet.parkitlive.fragments.FindParkingFragment;
+import com.devlovepreet.parkitlive.fragments.FindMyCarFragment;
 import com.devlovepreet.parkitlive.fragments.TestFragment;
 import com.devlovepreet.parkitlive.menu.DrawerAdapter;
 import com.devlovepreet.parkitlive.menu.DrawerItem;
@@ -32,7 +33,11 @@ import com.devlovepreet.parkitlive.utils.SessionManager;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -42,20 +47,25 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final int POS_PARKINGMAP = 0;
-    private static final int POS_ACCOUNT = 1;
-    private static final int POS_MYLOCATION = 2;
-    private static final int POS_CART = 3;
-    private static final int POS_LOGOUT = 5;
+    private static final int POS_FIND_PARKING = 0;
+    private static final int POS_FIND_MY_CAR = 1;
+    private static final int POS_HISTORY = 2;
+    private static final int POS_LOGOUT = 3;
+
     SlidingRootNav slidingRootNavLayout;
     String theme;
-    MyLocationFragment myLocationFragment;
+    FindParkingFragment myLocationFragment;
     TestFragment testFragment;
     private SessionManager session;
     private String[] screenTitles;
 
     //    private static final int PERMISSION_REQUEST_CODE = 200;
     private Drawable[] screenIcons;
+
+    Calendar cStart, cEnd;
+    int hourStart=0, hourEnd=0;
+    String startTimeString="", endTimeString="";
+    boolean flagIsStarted=false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,11 +102,9 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         getSupportActionBar().setTitle(screenTitles[0]);
 
         DrawerAdapter adapter = new DrawerAdapter(Arrays.asList(
-                createItemFor(POS_PARKINGMAP).setChecked(true),
-                createItemFor(POS_ACCOUNT),
-                createItemFor(POS_MYLOCATION),
-                createItemFor(POS_CART),
-                new SpaceItem(48),
+                createItemFor(POS_FIND_PARKING).setChecked(true),
+                createItemFor(POS_FIND_MY_CAR),
+                createItemFor(POS_HISTORY),
                 createItemFor(POS_LOGOUT)));
         adapter.setListener(this);
 
@@ -105,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(adapter);
 
-        adapter.setSelected(POS_PARKINGMAP);
+        adapter.setSelected(POS_FIND_PARKING);
 
 //        if (!checkPermission()) {
 //
@@ -118,20 +126,25 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
     @Override
     public void onItemSelected(int position) {
-        if (position == POS_PARKINGMAP) {
-            Fragment selectedScreen = ParkingMapFragment.createFor(screenTitles[position]);
+        if (position == POS_FIND_PARKING) {
+
+            Fragment selectedScreen = FindParkingFragment.createFor(screenTitles[position]);
             getSupportActionBar().setTitle(screenTitles[position]);
             showFragment(selectedScreen);
-        } else if (position == POS_MYLOCATION) {
-            Fragment selectedScreen = MyLocationFragment.createFor(screenTitles[position]);
+
+        } else if (position == POS_FIND_MY_CAR) {
+
+            Fragment selectedScreen = FindMyCarFragment.createFor(screenTitles[position]);
             getSupportActionBar().setTitle(screenTitles[position]);
             showFragment(selectedScreen);
-        } else if (position == POS_LOGOUT) {
-            logoutUser();
-        } else {
+
+        } else if (position == POS_HISTORY) {
             Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
             getSupportActionBar().setTitle(screenTitles[position]);
             showFragment(selectedScreen);
+
+        } else if (position == POS_LOGOUT) {
+            logoutUser();
         }
 
 //        Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
@@ -202,12 +215,52 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         int id = item.getItemId();
 
+        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        dateFormatter.setLenient(false);
+        Date startDate, endDate;
+
+
         if (id == R.id.action_settings) {
 
             Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(myIntent);
 
             return true;
+        }
+        else if(id==R.id.action_start)
+        {
+            Toast.makeText(this, "Car Parked", Toast.LENGTH_SHORT).show();
+            cStart=Calendar.getInstance();
+            hourStart=cStart.get(Calendar.HOUR_OF_DAY);
+
+            startDate=new Date();
+            startTimeString = dateFormatter.format(startDate);
+            flagIsStarted=true;
+        }
+        else if(id==R.id.action_end)
+        {
+            if(flagIsStarted==false) {
+                Toast.makeText(this, "Invalid Operation", Toast.LENGTH_SHORT).show();
+                return super.onOptionsItemSelected(item);
+            }
+
+            Toast.makeText(this, "Car Un-Parked, calculating Bill...", Toast.LENGTH_SHORT).show();
+            cEnd=Calendar.getInstance();
+            hourEnd=cEnd.get(Calendar.HOUR_OF_DAY);
+
+            endDate=new Date();
+            endTimeString = dateFormatter.format(endDate);
+
+            int diffHour=hourEnd-hourStart;
+            int price=20+diffHour*10;
+
+            Intent i=new Intent();
+            i.setClass(this, BillActivity.class);
+            i.putExtra("startDate", startTimeString);
+            i.putExtra("endDate", endTimeString);
+            i.putExtra("bill", price);
+            startActivity(i);
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -322,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        if (requestCode == MyLocationFragment.MY_PERMISSIONS_REQUEST_LOCATION) {
+        if (requestCode == FindParkingFragment.MY_PERMISSIONS_REQUEST_LOCATION) {
             myLocationFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
