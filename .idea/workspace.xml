@@ -16,7 +16,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.lock" afterPath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/devlovepreet/parkitlive/fragments/MyLocationFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/devlovepreet/parkitlive/fragments/MyLocationFragment.java" />
     </list>
     <ignored path="ParkItLive.iws" />
@@ -52,15 +51,20 @@
       <file leaf-file-name="MyLocationFragment.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/devlovepreet/parkitlive/fragments/MyLocationFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="206" column="174" selection-start-line="206" selection-start-column="174" selection-end-line="206" selection-end-column="174" />
+            <state relative-caret-position="180">
+              <caret line="176" column="53" selection-start-line="176" selection-start-column="53" selection-end-line="176" selection-end-column="53" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#8515#9814#0" expanded="true" />
-                <element signature="e#9813#9814#0" expanded="true" />
-                <element signature="e#9876#9877#0" expanded="true" />
-                <element signature="e#9910#9911#0" expanded="true" />
-                <marker date="1495977615692" expanded="true" signature="11383:11661" ph="..." />
+                <element signature="e#4006#4040#0" expanded="true" />
+                <element signature="e#4058#4100#0" expanded="true" />
+                <element signature="e#4205#4262#0" expanded="true" />
+                <element signature="e#8250#9556#0" expanded="true" />
+                <element signature="e#9555#9556#0" expanded="true" />
+                <element signature="e#9618#9619#0" expanded="true" />
+                <element signature="e#9652#9653#0" expanded="true" />
+                <element signature="e#12894#13450#0" expanded="true" />
+                <element signature="e#13449#13450#0" expanded="true" />
+                <marker date="1495981155115" expanded="true" signature="11125:11403" ph="..." />
               </folding>
             </state>
           </provider>
@@ -2732,7 +2736,7 @@
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17954545" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13181818" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32954547" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -2803,11 +2807,16 @@
           <caret line="213" column="24" selection-start-line="213" selection-start-column="24" selection-end-line="213" selection-end-column="24" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#8515#9814#0" expanded="true" />
-            <element signature="e#9813#9814#0" expanded="true" />
-            <element signature="e#9876#9877#0" expanded="true" />
-            <element signature="e#9910#9911#0" expanded="true" />
-            <marker date="1495977615692" expanded="true" signature="11383:11661" ph="..." />
+            <element signature="e#4006#4040#0" expanded="true" />
+            <element signature="e#4058#4100#0" expanded="true" />
+            <element signature="e#4205#4262#0" expanded="true" />
+            <element signature="e#8250#9556#0" expanded="true" />
+            <element signature="e#9555#9556#0" expanded="true" />
+            <element signature="e#9618#9619#0" expanded="true" />
+            <element signature="e#9652#9653#0" expanded="true" />
+            <element signature="e#12894#13450#0" expanded="true" />
+            <element signature="e#13449#13450#0" expanded="true" />
+            <marker date="1495981155115" expanded="true" signature="11125:11403" ph="..." />
           </folding>
         </state>
       </provider>
@@ -3205,15 +3214,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/devlovepreet/parkitlive/fragments/MyLocationFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="206" column="174" selection-start-line="206" selection-start-column="174" selection-end-line="206" selection-end-column="174" />
+        <state relative-caret-position="180">
+          <caret line="176" column="53" selection-start-line="176" selection-start-column="53" selection-end-line="176" selection-end-column="53" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#8515#9814#0" expanded="true" />
-            <element signature="e#9813#9814#0" expanded="true" />
-            <element signature="e#9876#9877#0" expanded="true" />
-            <element signature="e#9910#9911#0" expanded="true" />
-            <marker date="1495977615692" expanded="true" signature="11383:11661" ph="..." />
+            <element signature="e#4006#4040#0" expanded="true" />
+            <element signature="e#4058#4100#0" expanded="true" />
+            <element signature="e#4205#4262#0" expanded="true" />
+            <element signature="e#8250#9556#0" expanded="true" />
+            <element signature="e#9555#9556#0" expanded="true" />
+            <element signature="e#9618#9619#0" expanded="true" />
+            <element signature="e#9652#9653#0" expanded="true" />
+            <element signature="e#12894#13450#0" expanded="true" />
+            <element signature="e#13449#13450#0" expanded="true" />
+            <marker date="1495981155115" expanded="true" signature="11125:11403" ph="..." />
           </folding>
         </state>
       </provider>

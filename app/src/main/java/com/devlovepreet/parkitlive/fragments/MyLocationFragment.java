@@ -25,6 +25,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -67,8 +69,11 @@ public class MyLocationFragment extends SupportMapFragment
 
     Marker markerInitial, marker1, marker2, marker3, marker4, marker5, marker6, marker7, marker8, marker9, marker10;
     LatLng latLngInitial, latLng1, latLng2, latLng3, latLng4, latLng5, latLng6, latLng7, latLng8, latLng9, latLng10;
-
+    LatLng latLngG3SDefault;
     Marker tempMarker1;
+
+    ArrayList<Marker> staticMarkerList;
+    ArrayList<LatLng> staticLatLngList;
 
     public static MyLocationFragment createFor(String text) {
         MyLocationFragment fragment = new MyLocationFragment();
@@ -110,17 +115,9 @@ public class MyLocationFragment extends SupportMapFragment
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         String theme = sharedPreferences.getString(getString(R.string.pref_theme_key),
                 getString(R.string.pref_theme_light_value));
-
-        addAllMarkers();
+        
+        addAllDynamicMarkers();
         setOnClickListenerOnMap();
-
-        //Navigator navigator = new Navigator(mGoogleMap, latLng1, latLng2);
-        //navigator.findDirections(false);
-
-
-
-        //mGoogleMap.setMapStyle(MapStyleOptions.);
-        //mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         if (theme.equals(getResources().getString(R.string.pref_theme_light_value))) {
             mGoogleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.style_json_light));
@@ -146,23 +143,38 @@ public class MyLocationFragment extends SupportMapFragment
             mGoogleMap.setMyLocationEnabled(true);
         }
 
+        latLngG3SDefault=new LatLng(28.733898, 77.113388);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(latLngG3SDefault, 17.0f);
+        //mGoogleMap.moveCamera( cu );
+        mGoogleMap.animateCamera(cu);
+
 
 
     }
 
-    public void addAllMarkers()
+    public void initializeStaticMarkerList()
     {
-        latLng1=new LatLng(28.734092, 77.112228);
-        latLng2=new LatLng(28.734431, 77.112500);
-        latLng3=new LatLng(28.733674, 77.112693);
-        latLng4=new LatLng(28.733707, 77.112918);
-        latLng5=new LatLng(28.733486, 77.112119);
-        latLng6=new LatLng(28.733942, 77.112001);
-        latLng7=new LatLng(28.733293, 77.112436);
-        latLng8=new LatLng(28.733381, 77.112596);
-        latLng9=new LatLng(28.733122, 77.112915);
-        latLng10=new LatLng(28.732924, 77.113205);
-        latLngInitial=new LatLng(28.733996, 77.113249);
+        staticLatLngList=new ArrayList<LatLng>();
+        staticMarkerList=new ArrayList<Marker>();
+
+        //now we will add all latitude longitude objects in the list
+
+
+    }
+
+    public void addAllDynamicMarkers()
+    {
+        latLng1=new LatLng(28.732713, 77.113843);
+        latLng2=new LatLng(28.733052, 77.113130);
+        latLng3=new LatLng(28.733188, 77.112942);
+        latLng4=new LatLng(28.734004, 77.112161);
+        latLng5=new LatLng(28.734079, 77.112044);
+        latLng6=new LatLng(28.733200, 77.114169);
+        latLng7=new LatLng(28.733421, 77.113996);
+        latLng8=new LatLng(28.733765, 77.113056);
+        latLng9=new LatLng(28.734141, 77.112376);
+        latLng10=new LatLng(28.734296, 77.112505);
+        latLngInitial=new LatLng(28.734821, 77.114231);
 
 
         markerInitial=mGoogleMap.addMarker(new MarkerOptions().position(latLngInitial).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).title("Entry"));
@@ -177,20 +189,7 @@ public class MyLocationFragment extends SupportMapFragment
         marker9=mGoogleMap.addMarker(new MarkerOptions().position(latLng9).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-9"));
         marker9=mGoogleMap.addMarker(new MarkerOptions().position(latLng9).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title("P-10"));
 
-//
-//        MarkerOptions markerOptions = new MarkerOptions();
-//        markerOptions.position(latLng1);
-//        markerOptions.title("Current Position");
-//        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker_icon_blue))
-//                .anchor(0.0f, 1.0f);
-//        marker1 = mGoogleMap.addMarker(markerOptions);
-//
-//        MarkerOptions markerOptions2 = new MarkerOptions();
-//        markerOptions2.position(latLng2);
-//        markerOptions2.title("Current Position");
-//        markerOptions2.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker_icon_blue))
-//                .anchor(0.0f, 1.0f);
-//        marker2 = mGoogleMap.addMarker(markerOptions2);
+
     }
 
     public void setOnClickListenerOnMap()
@@ -201,7 +200,7 @@ public class MyLocationFragment extends SupportMapFragment
                 LatLng latLngDestination = destinationMarker.getPosition();
 
                 deleteAllExistingPathFromMap();
-                addAllMarkers();
+                addAllDynamicMarkers();
 
                 destinationMarker.remove();
                 tempMarker1=mGoogleMap.addMarker(new MarkerOptions().position(latLngDestination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)).title("Destination"));
